@@ -10,7 +10,7 @@ import net.khaibq.javabackend.entity.Department;
 import net.khaibq.javabackend.entity.User;
 import net.khaibq.javabackend.exception.BaseException;
 import net.khaibq.javabackend.repository.DepartmentRepository;
-import net.khaibq.javabackend.repository.LovRepository;
+import net.khaibq.javabackend.repository.CustomRepository;
 import net.khaibq.javabackend.repository.UserRepository;
 import net.khaibq.javabackend.service.DepartmentService;
 import net.khaibq.javabackend.ultis.CommonUtils;
@@ -29,7 +29,7 @@ import java.util.Objects;
 public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
-    private final LovRepository lovRepository;
+    private final CustomRepository customRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -63,7 +63,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
 
         Department department = new Department();
-        department.setCode("DED" + lovRepository.getSequence() + "E");
+        department.setCode("DED" + customRepository.getSequence() + "E");
         department.setName(dto.getName());
         department.setParent(parent);
         department.setManager(manager);

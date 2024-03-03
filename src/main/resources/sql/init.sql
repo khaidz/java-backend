@@ -50,18 +50,7 @@ CREATE TABLE IF NOT EXISTS khaibq.tbl_department
     CONSTRAINT UQ_department_code UNIQUE (code)
 );
 
-create sequence seq_lov as integer;
-
-CREATE TABLE IF NOT EXISTS khaibq.tbl_lov
-(
-    id   BIGINT PRIMARY KEY DEFAULT nextval('seq_lov'),
-    type VARCHAR(50)  NOT NULL,
-    code VARCHAR(50)  NOT NULL,
-    name VARCHAR(200) NOT NULL,
-    CONSTRAINT UQ_lov_type_code UNIQUE (type, code)
-);
-
-alter sequence seq_lov owned by khaibq.tbl_lov.id;
+create sequence seq_common as integer;
 
 
 -------------------------------
