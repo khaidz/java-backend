@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS khaibq.tbl_user
     id                 SERIAL PRIMARY KEY,
     username           VARCHAR(50)  NOT NULL,
     password           VARCHAR(200) NOT NULL,
-    email              VARCHAR(100),
+    email              VARCHAR(100) NOT NULL,
     dept_code          VARCHAR(50),
     created_by         VARCHAR(50)  NOT NULL,
     created_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

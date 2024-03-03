@@ -1,23 +1,24 @@
 package net.khaibq.javabackend.dto.user;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.khaibq.javabackend.dto.role.RoleDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class UpdateDto {
     private Long id;
-    private String username;
+    private String password;
+    @NotEmpty
     private String email;
     private String departmentCode;
-    private String departmentName;
-    private List<RoleDto> roles;
     private Integer isDeleted;
+    private List<String> roles = new ArrayList<>();
 }

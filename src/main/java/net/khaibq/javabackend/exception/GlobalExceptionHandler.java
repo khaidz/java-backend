@@ -26,9 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public BaseResponse<Object> handleConstraintViolationException(ConstraintViolationException ex) {
         List<String> list = new ArrayList<>();
-        ex.getConstraintViolations().forEach(x -> {
-            list.add(x.getPropertyPath().toString() + " " + x.getMessage());
-        });
+        ex.getConstraintViolations().forEach(x -> list.add(x.getPropertyPath().toString() + " " + x.getMessage()));
         String error = String.join("\n", list);
         return BaseResponse.fail(error);
     }
@@ -37,9 +35,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public BaseResponse<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         List<String> list = new ArrayList<>();
-        ex.getFieldErrors().forEach(x -> {
-            list.add(x.getField() + " " + x.getDefaultMessage());
-        });
+        ex.getFieldErrors().forEach(x -> list.add(x.getField() + " " + x.getDefaultMessage()));
         String error = String.join(" \n", list);
         return BaseResponse.fail(error);
     }
