@@ -1,5 +1,6 @@
 package net.khaibq.javabackend.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import net.khaibq.javabackend.dto.role.RoleDto;
 import net.khaibq.javabackend.repository.RoleRepository;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;

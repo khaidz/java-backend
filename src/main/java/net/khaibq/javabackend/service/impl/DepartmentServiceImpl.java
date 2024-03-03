@@ -1,5 +1,6 @@
 package net.khaibq.javabackend.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import net.khaibq.javabackend.dto.PageDataDto;
 import net.khaibq.javabackend.dto.department.CreateDto;
@@ -9,8 +10,8 @@ import net.khaibq.javabackend.dto.department.UpdateDto;
 import net.khaibq.javabackend.entity.Department;
 import net.khaibq.javabackend.entity.User;
 import net.khaibq.javabackend.exception.BaseException;
-import net.khaibq.javabackend.repository.DepartmentRepository;
 import net.khaibq.javabackend.repository.CustomRepository;
+import net.khaibq.javabackend.repository.DepartmentRepository;
 import net.khaibq.javabackend.repository.UserRepository;
 import net.khaibq.javabackend.service.DepartmentService;
 import net.khaibq.javabackend.ultis.CommonUtils;
@@ -26,6 +27,7 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;

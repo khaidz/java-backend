@@ -1,5 +1,6 @@
 package net.khaibq.javabackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -37,7 +38,8 @@ public class User extends AbstractAuditingEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_code", referencedColumnName = "code")
+    @JsonManagedReference
     private Department department;
 }

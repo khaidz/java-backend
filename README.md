@@ -38,6 +38,7 @@
     + Gán quyền cho user ***khaibq*** vừa tạo ở trên
       + ```grant all privileges on database java_backend to khaibq;```
       + ```flush```
+  - [cheat-sheet] (https://karloespiritu.github.io/cheatsheets/postgresql/)
 - Cài đặt nodejs
   + ```curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash```
   + Mở 1 terminal mới

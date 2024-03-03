@@ -48,7 +48,7 @@ public class DepartmentController {
 
     @PutMapping("/{id}")
     public BaseResponse<DepartmentDto> updateDepartment(@PathVariable Long id, @RequestBody @Valid UpdateDto dto) {
-        if (!Objects.equals(id, dto.getId())){
+        if (!Objects.equals(id, dto.getId())) {
             throw new BaseException("id is invalid");
         }
         return BaseResponse.success(departmentService.update(dto));
