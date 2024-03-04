@@ -4,11 +4,14 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import net.khaibq.javabackend.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,10 +43,15 @@ public class GlobalExceptionHandler {
         return BaseResponse.fail(error);
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({BadCredentialsException.class, DisabledException.class})
+    public BaseResponse<Object> handleAuthenticationException(Exception ex) {
+        return BaseResponse.fail(ex.getMessage());
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public BaseResponse<Object> handleBaseException(Exception ex) {
-        ex.printStackTrace();
         return BaseResponse.fail(ex.getMessage());
     }
 }
