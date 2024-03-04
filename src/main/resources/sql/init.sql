@@ -52,6 +52,16 @@ CREATE TABLE IF NOT EXISTS khaibq.tbl_department
 
 create sequence seq_common as integer;
 
+CREATE TABLE IF NOT EXISTS khaibq.tbl_chatbox
+(
+    id                 SERIAL PRIMARY KEY,
+    message            VARCHAR(1000)  NOT NULL,
+    created_by         VARCHAR(50)  NOT NULL,
+    created_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified_by   VARCHAR(50),
+    last_modified_date TIMESTAMP,
+    is_deleted         INT       DEFAULT 0
+);
 
 -------------------------------
 INSERT INTO khaibq.tbl_role (code, name, created_by, created_date, last_modified_by, last_modified_date,
