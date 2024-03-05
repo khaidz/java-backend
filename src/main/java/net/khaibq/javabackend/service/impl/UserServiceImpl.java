@@ -6,7 +6,6 @@ import net.khaibq.javabackend.dto.PageDataDto;
 import net.khaibq.javabackend.dto.user.CreateDto;
 import net.khaibq.javabackend.dto.user.UpdateDto;
 import net.khaibq.javabackend.dto.user.UserDto;
-import net.khaibq.javabackend.entity.Department;
 import net.khaibq.javabackend.entity.Role;
 import net.khaibq.javabackend.entity.User;
 import net.khaibq.javabackend.exception.BaseException;
@@ -58,10 +57,8 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmailIgnoreCase(dto.getEmail())) {
             throw new BaseException("Email already exists");
         }
-        Department department = null;
-        if (StringUtils.isNotEmpty(dto.getDepartmentCode())) {
-            department = departmentRepository.findByCode(dto.getDepartmentCode())
-                    .orElseThrow(() -> new BaseException("Department does not exist"));
+        if (dto.getDeptCode() != null && !departmentRepository.existsByCode(dto.getDeptCode())) {
+            throw new BaseException("Department does not exist");
         }
 
         List<Role> roles = dto.getRoles()
@@ -71,10 +68,10 @@ public class UserServiceImpl implements UserService {
                 .toList();
 
         User user = new User();
-        user.setUsername(dto.getUsername());
+        user.setUsername(dto.getUsername().toLowerCase());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setEmail(dto.getEmail());
-        user.setDepartment(department);
+        user.setDeptCode(dto.getDeptCode());
         user.setRoles(roles);
         user.setIsDeleted(0);
         userRepository.save(user);
@@ -92,14 +89,12 @@ public class UserServiceImpl implements UserService {
         }
         user.setEmail(email);
 
-        Department department = user.getDepartment();
-        if (StringUtils.isEmpty(dto.getDepartmentCode())) {
-            department = null;
-        } else if (department == null || !Objects.equals(department.getCode(), dto.getDepartmentCode())) {
-            department = departmentRepository.findByCode(dto.getDepartmentCode())
-                    .orElseThrow(() -> new BaseException("Department does not exist"));
+        if (dto.getDeptCode() != null
+            && !Objects.equals(dto.getDeptCode(), user.getDeptCode())
+            && !departmentRepository.existsByCode(dto.getDeptCode())) {
+            throw new BaseException("Department does not exist");
         }
-        user.setDepartment(department);
+        user.setDeptCode(dto.getDeptCode());
 
         if (StringUtils.isNotEmpty(dto.getPassword()) && !passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));

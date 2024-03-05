@@ -16,8 +16,7 @@ public class UserDto {
     private Long id;
     private String username;
     private String email;
-    private String departmentCode;
-    private String departmentName;
+    private String deptCode;
     private List<RoleDto> roles;
     private Integer isDeleted;
 }

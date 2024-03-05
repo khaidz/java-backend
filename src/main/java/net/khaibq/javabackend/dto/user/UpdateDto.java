@@ -18,7 +18,7 @@ public class UpdateDto {
     private String password;
     @NotEmpty
     private String email;
-    private String departmentCode;
+    private String deptCode;
     private Integer isDeleted;
     private List<String> roles = new ArrayList<>();
 }

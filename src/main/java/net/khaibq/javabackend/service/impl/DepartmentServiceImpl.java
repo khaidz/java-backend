@@ -6,9 +6,9 @@ import net.khaibq.javabackend.dto.PageDataDto;
 import net.khaibq.javabackend.dto.department.CreateDto;
 import net.khaibq.javabackend.dto.department.DepartmentDto;
 import net.khaibq.javabackend.dto.department.DepartmentTreeDto;
+import net.khaibq.javabackend.dto.department.DepartmentTreeProjection;
 import net.khaibq.javabackend.dto.department.UpdateDto;
 import net.khaibq.javabackend.entity.Department;
-import net.khaibq.javabackend.entity.User;
 import net.khaibq.javabackend.exception.BaseException;
 import net.khaibq.javabackend.repository.CustomRepository;
 import net.khaibq.javabackend.repository.DepartmentRepository;
@@ -16,7 +16,6 @@ import net.khaibq.javabackend.repository.UserRepository;
 import net.khaibq.javabackend.service.DepartmentService;
 import net.khaibq.javabackend.ultis.CommonUtils;
 import net.khaibq.javabackend.ultis.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,24 +50,20 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentDto create(CreateDto dto) {
         Department parent = null;
-        User manager = null;
-        if (StringUtils.isNotEmpty(dto.getParentCode())) {
+        if (dto.getParentCode() != null) {
             parent = departmentRepository.findByCode(dto.getParentCode())
                     .orElseThrow(() -> new BaseException("Parent department does not exist"));
         }
 
-        if (StringUtils.isNotEmpty(dto.getManagerUsername())) {
-            manager = userRepository.findByUsernameIgnoreCase(dto.getManagerUsername());
-            if (manager == null) {
-                throw new BaseException("Manager does not exist");
-            }
+        if (dto.getManagerUsername() != null && !userRepository.existsByUsername(dto.getManagerUsername())) {
+            throw new BaseException("Manager does not exist");
         }
 
         Department department = new Department();
         department.setCode("DED" + customRepository.getSequence() + "E");
         department.setName(dto.getName());
         department.setParent(parent);
-        department.setManager(manager);
+        department.setManagerUsername(dto.getManagerUsername());
         department.setIsDeleted(0);
         departmentRepository.save(department);
         return modelMapper.map(department, DepartmentDto.class);
@@ -80,9 +75,8 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .orElseThrow(() -> new BaseException("Not found department with id = " + dto.getId()));
 
         Department parent = department.getParent();
-        User manager = department.getManager();
 
-        if (StringUtils.isEmpty(dto.getParentCode())) {
+        if (dto.getParentCode() == null) {
             parent = null;
         } else if (parent == null || !Objects.equals(parent.getCode(), dto.getParentCode())) {
             parent = departmentRepository.findByCode(dto.getParentCode())
@@ -91,25 +85,21 @@ public class DepartmentServiceImpl implements DepartmentService {
             //Kiểm tra parentCode có phải thuộc dept con hay không -> tránh vòng lặp
             List<String> lstDeptCodeTree = departmentRepository.getDepartmentTree(department.getCode())
                     .stream()
-                    .map(Department::getCode)
+                    .map(DepartmentTreeProjection::getCode)
                     .toList();
             if (lstDeptCodeTree.contains(dto.getParentCode())) {
                 throw new BaseException("Cannot set this department or a child department to become a parent department");
             }
         }
 
-        if (StringUtils.isEmpty(dto.getManagerUsername())) {
-            manager = null;
-        } else if (manager == null || !StringUtils.equalsIgnoreCase(manager.getUsername(), dto.getManagerUsername())) {
-            manager = userRepository.findByUsernameIgnoreCase(dto.getManagerUsername());
-            if (manager == null) {
-                throw new BaseException("Manager does not exist");
-            }
+        if (dto.getManagerUsername() != null
+            && !Objects.equals(department.getManagerUsername(), dto.getManagerUsername())
+            && !userRepository.existsByUsername(dto.getManagerUsername())) {
+            throw new BaseException("Manager does not exist");
         }
-
         department.setName(dto.getName());
         department.setParent(parent);
-        department.setManager(manager);
+        department.setManagerUsername(dto.getManagerUsername());
         department.setIsDeleted(dto.getIsDeleted());
         departmentRepository.save(department);
 
@@ -119,15 +109,21 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentTreeDto getDepartmentTree(String code) {
         List<DepartmentTreeDto> list = departmentRepository.getDepartmentTree(code)
-                .stream()
-                .map(entity -> modelMapper.map(entity, DepartmentTreeDto.class))
+                .stream().map(x -> DepartmentTreeDto.builder()
+                        .id(x.getId())
+                        .code(x.getCode())
+                        .name(x.getName())
+                        .parentCode(x.getParentCode())
+                        .isDeleted(x.getIsDeleted())
+                        .managerUsername(x.getManagerUsername())
+                        .level(x.getLevel())
+                        .build())
                 .toList();
 
         DepartmentTreeDto dto = list.stream()
                 .filter(x -> Objects.equals(x.getCode(), code))
                 .findFirst()
                 .orElseThrow(() -> new BaseException("Not found department with code = '" + code + "'"));
-        dto.setLevel(1);
         setDepartmentWithChildren(list, dto);
 
         return dto;
@@ -146,7 +142,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         List<DepartmentTreeDto> children = list.stream()
                 .filter(x -> Objects.equals(x.getParentCode(), dto.getCode()))
                 .map(x -> {
-                    x.setLevel(dto.getLevel() + 1);
                     setDepartmentWithChildren(list, x);
                     return x;
                 })

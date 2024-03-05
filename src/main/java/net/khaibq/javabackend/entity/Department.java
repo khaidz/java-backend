@@ -1,6 +1,5 @@
 package net.khaibq.javabackend.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,8 +28,5 @@ public class Department extends AbstractAuditingEntity {
     @JoinColumn(name = "parent_code", referencedColumnName = "code")
     private Department parent;
 
-    @ManyToOne
-    @JoinColumn(name = "manager_username", referencedColumnName = "username")
-    @JsonBackReference
-    private User manager;
+    private String managerUsername;
 }

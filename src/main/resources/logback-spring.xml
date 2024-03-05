@@ -18,8 +18,8 @@
             <totalSizeCap>1GB</totalSizeCap> <!-- Dung lượng tổng các file log trong 1 ngày-->
         </rollingPolicy>
         <encoder>
-<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
-            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+<!--            <pattern>${FILE_LOG_PATTERN}</pattern>-->
         </encoder>
     </appender>
 
