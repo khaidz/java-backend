@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.naming.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +51,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public BaseResponse<Object> handleBaseException(Exception ex) {
+        ex.printStackTrace();
         return BaseResponse.fail(ex.getMessage());
     }
 }

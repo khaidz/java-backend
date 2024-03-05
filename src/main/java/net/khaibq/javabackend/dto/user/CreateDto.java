@@ -24,6 +24,6 @@ public class CreateDto {
     private String password;
     @NotEmpty
     private String email;
-    private String departmentCode;
+    private String deptCode;
     private List<String> roles = new ArrayList<>();
 }

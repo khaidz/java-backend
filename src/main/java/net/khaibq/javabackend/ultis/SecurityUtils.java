@@ -46,10 +46,10 @@ public final class SecurityUtils {
         val securityContext = SecurityContextHolder.getContext();
         val authentication = securityContext.getAuthentication();
         val principal = authentication.getPrincipal();
-        if (principal instanceof CustomUser) {
-            return Optional.of((CustomUser) principal);
-        } else if (principal instanceof UserDetails) {
-            return Optional.of((UserDetails) principal);
+        if (principal instanceof CustomUser customUser) {
+            return Optional.of(customUser);
+        } else if (principal instanceof UserDetails userDetails) {
+            return Optional.of(userDetails);
         }
         return Optional.empty();
     }
@@ -58,11 +58,10 @@ public final class SecurityUtils {
     private static String extractPrincipal(Authentication authentication) {
         if (authentication == null) {
             return null;
-        } else if (authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails springSecurityUser = (UserDetails) authentication.getPrincipal();
-            return springSecurityUser.getUsername();
-        } else if (authentication.getPrincipal() instanceof String) {
-            return (String) authentication.getPrincipal();
+        } else if (authentication.getPrincipal() instanceof UserDetails userDetails) {
+            return userDetails.getUsername();
+        } else if (authentication.getPrincipal() instanceof String string) {
+            return string;
         }
         return null;
     }
