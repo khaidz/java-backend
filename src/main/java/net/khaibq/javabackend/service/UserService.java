@@ -1,17 +1,16 @@
 package net.khaibq.javabackend.service;
 
-import net.khaibq.javabackend.dto.PageDataDto;
-import net.khaibq.javabackend.dto.user.CreateDto;
-import net.khaibq.javabackend.dto.user.UpdateDto;
-import net.khaibq.javabackend.dto.user.UserDto;
-import org.springframework.data.domain.Pageable;
+import net.khaibq.javabackend.dto.auth.ChangePasswordRequestDto;
+import net.khaibq.javabackend.dto.auth.ForgotPasswordRequestDto;
+import net.khaibq.javabackend.dto.auth.RegisterRequestDto;
+import net.khaibq.javabackend.dto.auth.RegisterResponseDto;
 
 public interface UserService {
-    PageDataDto<UserDto> getList(Pageable pageable);
+    RegisterResponseDto handleRegister(RegisterRequestDto dto);
 
-    UserDto getDetail(Long id);
+    void handleForgotPassword(ForgotPasswordRequestDto dto);
 
-    UserDto create(CreateDto dto);
+    String validateKey(String key);
 
-    UserDto update(UpdateDto dto);
+    void handleChangePassword(ChangePasswordRequestDto dto);
 }

@@ -18,7 +18,6 @@ import java.util.List;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BaseException.class)
     public BaseResponse<Object> handleBaseException(BaseException ex) {
         return BaseResponse.fail(ex.getMessage());
@@ -28,7 +27,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public BaseResponse<Object> handleConstraintViolationException(ConstraintViolationException ex) {
         List<String> list = new ArrayList<>();
-        ex.getConstraintViolations().forEach(x -> list.add(x.getPropertyPath().toString() + " " + x.getMessage()));
+//        ex.getConstraintViolations().forEach(x -> list.add(x.getPropertyPath().toString() + " " + x.getMessage()));
+        ex.getConstraintViolations().forEach(x -> list.add(x.getMessage()));
         String error = String.join("\n", list);
         return BaseResponse.fail(error);
     }
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public BaseResponse<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         List<String> list = new ArrayList<>();
-        ex.getFieldErrors().forEach(x -> list.add(x.getField() + " " + x.getDefaultMessage()));
+        ex.getFieldErrors().forEach(x -> list.add(x.getDefaultMessage()));
         String error = String.join(" \n", list);
         return BaseResponse.fail(error);
     }
@@ -45,7 +45,10 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({BadCredentialsException.class, DisabledException.class})
     public BaseResponse<Object> handleAuthenticationException(Exception ex) {
-        return BaseResponse.fail(ex.getMessage());
+        if (ex instanceof BadCredentialsException){
+            return BaseResponse.fail("Tên đăng nhập hoặc mật khẩu không đúng");
+        }
+        return BaseResponse.fail("Tài khoản đang bị khóa");
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

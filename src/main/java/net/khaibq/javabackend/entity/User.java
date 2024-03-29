@@ -30,11 +30,7 @@ public class User extends AbstractAuditingEntity {
 
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tbl_user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles;
+    private Integer gender;
 
-    private String deptCode;
+    private Integer level;
 }
