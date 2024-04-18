@@ -17,6 +17,6 @@ public class UserController {
 
     @GetMapping("/getUserInfo")
     public BaseResponse<UserDto> getUserInfo() {
-        return BaseResponse.success(null);
+        return BaseResponse.success(userService.getUserInfo());
     }
 }

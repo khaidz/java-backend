@@ -6,10 +6,10 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tbl_post_like")
+@Table(name = "tbl_topic_comment_like")
 @Data
-public class PostLike extends AbstractAuditingEntity {
+public class TopicCommentLike extends AbstractAuditingEntity {
     @EmbeddedId
-    private UserPostLikeId id;
+    private UserTopicCommentLikeId id;
     private Integer type;//Like, heart, sad,...
 }

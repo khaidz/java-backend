@@ -1,35 +1,28 @@
 package net.khaibq.javabackend.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.khaibq.javabackend.dto.category.CategoryDto;
-import net.khaibq.javabackend.entity.Category;
 import net.khaibq.javabackend.repository.CategoryRepository;
 import net.khaibq.javabackend.service.CategoryService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final ModelMapper modelMapper;
+    private final ModelMapper mapper;
 
     @Override
     public List<CategoryDto> getListCategory() {
-        List<Category> categoryList = categoryRepository.findAll();
-        return categoryList
+        return categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
                 .stream()
-                .map(item -> {
-                    Long countChildren = categoryList.stream()
-                            .filter(x -> Objects.equals(x.getParentId(), item.getId()))
-                            .count();
-                    CategoryDto dto = modelMapper.map(item, CategoryDto.class);
-                    dto.setChildren(countChildren);
-                    return dto;
-                })
+                .map(x -> mapper.map(x, CategoryDto.class))
                 .toList();
     }
 }

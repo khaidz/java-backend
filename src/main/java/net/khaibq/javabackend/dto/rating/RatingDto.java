@@ -1,4 +1,4 @@
-package net.khaibq.javabackend.dto.category;
+package net.khaibq.javabackend.dto.rating;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDto {
-    private Long id;
-    private String title;
-    private String slug;
+public class RatingDto {
+    private Double average;
+    private Integer countRating;
 }

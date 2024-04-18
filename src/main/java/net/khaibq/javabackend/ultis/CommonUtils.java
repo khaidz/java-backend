@@ -29,4 +29,15 @@ public final class CommonUtils {
         dto.setContent(page.getContent());
         return dto;
     }
+
+    public static String convertToSlug(String input) {
+        if (input == null) return null;
+        input = UnicodeUtils.removeAccent(input);
+        String slug = input.toLowerCase().trim();
+        slug = slug.replaceAll("[^a-z0-9\\s-]", "");
+        slug = slug.replaceAll("\\s+", "-");
+        slug = slug.replaceAll("-+", "-");
+        slug = slug.replaceAll("^-+|-+$", "");
+        return slug;
+    }
 }

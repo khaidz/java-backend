@@ -4,6 +4,7 @@ import net.khaibq.javabackend.dto.auth.ChangePasswordRequestDto;
 import net.khaibq.javabackend.dto.auth.ForgotPasswordRequestDto;
 import net.khaibq.javabackend.dto.auth.RegisterRequestDto;
 import net.khaibq.javabackend.dto.auth.RegisterResponseDto;
+import net.khaibq.javabackend.dto.user.UserDto;
 
 public interface UserService {
     RegisterResponseDto handleRegister(RegisterRequestDto dto);
@@ -13,4 +14,6 @@ public interface UserService {
     String validateKey(String key);
 
     void handleChangePassword(ChangePasswordRequestDto dto);
+
+    UserDto getUserInfo();
 }

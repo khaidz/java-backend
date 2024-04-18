@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserPostLikeId implements Serializable {
-    private Long postId;
+public class UserPostCommentLikeId implements Serializable {
     private Long userId;
+    private Long postCommentId;
 }

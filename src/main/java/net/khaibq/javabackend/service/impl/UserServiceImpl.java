@@ -2,18 +2,21 @@ package net.khaibq.javabackend.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.khaibq.javabackend.dto.auth.ChangePasswordRequestDto;
 import net.khaibq.javabackend.dto.auth.ForgotPasswordRequestDto;
 import net.khaibq.javabackend.dto.auth.RegisterRequestDto;
 import net.khaibq.javabackend.dto.auth.RegisterResponseDto;
 import net.khaibq.javabackend.dto.email.EmailDto;
+import net.khaibq.javabackend.dto.user.UserDto;
 import net.khaibq.javabackend.entity.User;
 import net.khaibq.javabackend.exception.BaseException;
 import net.khaibq.javabackend.repository.UserRepository;
 import net.khaibq.javabackend.service.UserService;
 import net.khaibq.javabackend.ultis.EmailUtils;
 import net.khaibq.javabackend.ultis.EncryptUtils;
+import net.khaibq.javabackend.ultis.SecurityUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -26,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -121,5 +124,15 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         userRepository.save(user);
         redisTemplate.opsForValue().setIfPresent(dto.getKey(), "", 1, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public UserDto getUserInfo() {
+        String username = SecurityUtils.getCurrentUsername().orElseThrow(() -> new BaseException("Không tìm thấy người dùng"));
+        User user = userRepository.findByUsernameIgnoreCase(username);
+        if (user != null){
+            return  modelMapper.map(user, UserDto.class);
+        }
+        return null;
     }
 }

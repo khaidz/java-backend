@@ -8,12 +8,13 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tbl_category")
+@Table(name = "tbl_post_comment")
 @Data
-public class Category extends AbstractAuditingEntity {
+public class PostComment extends AbstractAuditingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private String slug;
+    private String message;
+    private Long postId;
+    private Long parentId;
 }
