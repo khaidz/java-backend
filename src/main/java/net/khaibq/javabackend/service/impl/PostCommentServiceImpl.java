@@ -7,18 +7,16 @@ import net.khaibq.javabackend.dto.post_comment.PostCommentDto;
 import net.khaibq.javabackend.dto.post_comment.PostCommentRequestDto;
 import net.khaibq.javabackend.entity.PostComment;
 import net.khaibq.javabackend.entity.PostCommentLike;
-import net.khaibq.javabackend.entity.TopicComment;
-import net.khaibq.javabackend.entity.TopicCommentLike;
+import net.khaibq.javabackend.entity.User;
 import net.khaibq.javabackend.entity.UserPostCommentLikeId;
-import net.khaibq.javabackend.entity.UserTopicCommentLikeId;
 import net.khaibq.javabackend.exception.BaseException;
 import net.khaibq.javabackend.repository.CustomRepository;
 import net.khaibq.javabackend.repository.PostCommentLikeRepository;
 import net.khaibq.javabackend.repository.PostCommentRepository;
 import net.khaibq.javabackend.repository.PostRepository;
+import net.khaibq.javabackend.repository.UserRepository;
 import net.khaibq.javabackend.service.PostCommentService;
 import net.khaibq.javabackend.ultis.SecurityUtils;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,9 +27,9 @@ import org.springframework.stereotype.Service;
 public class PostCommentServiceImpl implements PostCommentService {
     private final CustomRepository customRepository;
     private final PostCommentRepository postCommentRepository;
-    private final ModelMapper modelMapper;
     private final PostRepository postRepository;
     private final PostCommentLikeRepository postCommentLikeRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void handleCreatePostComment(PostCommentRequestDto dto) {
@@ -54,7 +52,7 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     public Long handleLikePostComment(Long postCommentId) {
-        PostComment  postComment = postCommentRepository.findById(postCommentId).orElseThrow(() -> new BaseException("Không tìm thấy comment"));
+        PostComment postComment = postCommentRepository.findById(postCommentId).orElseThrow(() -> new BaseException("Không tìm thấy comment"));
         CustomUser customUser = (CustomUser) SecurityUtils.getCurrentUser().orElseThrow(() -> new BaseException("Có lỗi xảy ra"));
         Long userId = customUser.getId();
         PostCommentLike postCommentLike = postCommentLikeRepository.findByUserIdAndPostCommentTd(userId, postCommentId);
@@ -67,5 +65,19 @@ public class PostCommentServiceImpl implements PostCommentService {
         postCommentLikeRepository.save(postCommentLike);
 
         return postComment.getPostId();
+    }
+
+    @Override
+    public Long deletePostComment(Long postCommentId) {
+        String username = SecurityUtils.getCurrentUsername().orElseThrow(() -> new BaseException("Không tìm thấy người dùng"));
+        User user = userRepository.findByUsernameIgnoreCase(username);
+        if (user.getLevel() == null || user.getLevel() < 100) {
+            throw new BaseException("Truy cập không được phép");
+        }
+        PostComment postComment = postCommentRepository.findById(postCommentId).orElseThrow(() -> new BaseException("Không tìm thấy comment"));
+        Long postId = postComment.getPostId();
+        postCommentRepository.delete(postComment);
+        postCommentRepository.deleteByParentId(postCommentId);
+        return postId;
     }
 }

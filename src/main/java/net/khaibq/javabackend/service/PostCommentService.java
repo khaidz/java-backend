@@ -11,4 +11,5 @@ public interface PostCommentService {
     Page<PostCommentDto> getListPostComment(Long postId, Pageable pageable);
 
     Long handleLikePostComment(Long postCommentId);
+    Long deletePostComment(Long postCommentId);
 }

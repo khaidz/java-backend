@@ -4,4 +4,5 @@ import net.khaibq.javabackend.entity.TopicComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TopicCommentRepository extends JpaRepository<TopicComment, Long> {
+    void deleteByParentId(Long parentId);
 }

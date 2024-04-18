@@ -7,12 +7,15 @@ import net.khaibq.javabackend.dto.topic_comment.TopicCommentDto;
 import net.khaibq.javabackend.dto.topic_comment.TopicCommentRequestDto;
 import net.khaibq.javabackend.entity.TopicComment;
 import net.khaibq.javabackend.entity.TopicCommentLike;
+import net.khaibq.javabackend.entity.User;
 import net.khaibq.javabackend.entity.UserTopicCommentLikeId;
 import net.khaibq.javabackend.exception.BaseException;
 import net.khaibq.javabackend.repository.CustomRepository;
 import net.khaibq.javabackend.repository.TopicCommentLikeRepository;
 import net.khaibq.javabackend.repository.TopicCommentRepository;
+import net.khaibq.javabackend.repository.UserRepository;
 import net.khaibq.javabackend.service.TopicCommentService;
+import net.khaibq.javabackend.service.UserService;
 import net.khaibq.javabackend.ultis.SecurityUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +28,7 @@ public class TopicCommentServiceImpl implements TopicCommentService {
     private final TopicCommentRepository topicCommentRepository;
     private final TopicCommentLikeRepository topicCommentLikeRepository;
     private final CustomRepository customRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void handleCreateTopicComment(TopicCommentRequestDto dto) {
@@ -59,5 +63,19 @@ public class TopicCommentServiceImpl implements TopicCommentService {
         topicCommentLikeRepository.save(topicCommentLike);
 
         return topicComment.getTopicType();
+    }
+
+    @Override
+    public Integer deleteTopicComment(Long topicCommentId) {
+        String username = SecurityUtils.getCurrentUsername().orElseThrow(() -> new BaseException("Không tìm thấy người dùng"));
+        User user = userRepository.findByUsernameIgnoreCase(username);
+        if (user.getLevel() == null || user.getLevel() < 100 ){
+            throw new BaseException("Truy cập không được phép");
+        }
+        TopicComment topicComment = topicCommentRepository.findById(topicCommentId).orElseThrow(() -> new BaseException("Không tìm thấy comment"));
+        Integer topicType = topicComment.getTopicType();
+        topicCommentRepository.delete(topicComment);
+        topicCommentRepository.deleteByParentId(topicCommentId);
+        return topicType;
     }
 }

@@ -11,4 +11,6 @@ public interface TopicCommentService {
     Page<TopicCommentDto> getListTopicComment(Integer topicType, Pageable pageable);
 
     Integer handleLikeTopicComment(Long id);
+
+    Integer deleteTopicComment(Long id);
 }

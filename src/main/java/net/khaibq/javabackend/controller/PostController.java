@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,6 +75,14 @@ public class PostController {
     @PostMapping("/comments/like/{postCommentId}")
     public BaseResponse<PageDataDto<PostCommentDto>> likePostComment(@PathVariable Long postCommentId) {
         Long postId = postCommentService.handleLikePostComment(postCommentId);
+        return BaseResponse.success(CommonUtils.convertPageData(
+                postCommentService.getListPostComment(postId, PageRequest.of(0, 20, Sort.by("createdDate").descending()))
+        ));
+    }
+
+    @DeleteMapping("/comments/{postCommentId}")
+    public BaseResponse<PageDataDto<PostCommentDto>> deletePostComment(@PathVariable Long postCommentId) {
+        Long postId = postCommentService.deletePostComment(postCommentId);
         return BaseResponse.success(CommonUtils.convertPageData(
                 postCommentService.getListPostComment(postId, PageRequest.of(0, 20, Sort.by("createdDate").descending()))
         ));
