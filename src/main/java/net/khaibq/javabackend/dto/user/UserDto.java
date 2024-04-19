@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.khaibq.javabackend.dto.role.RoleDto;
-
-import java.util.List;
 
 @Data
 @Builder
@@ -16,7 +13,11 @@ public class UserDto {
     private Long id;
     private String username;
     private String email;
-    private String deptCode;
-    private List<RoleDto> roles;
+    private String fullName;
+    private Integer gender;
+    private String address;
+    private String phoneNumber;
+    private Integer level;
+    private String avatar;
     private Integer isDeleted;
 }

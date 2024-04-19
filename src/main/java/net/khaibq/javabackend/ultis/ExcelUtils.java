@@ -36,7 +36,7 @@ import java.util.Map;
  */
 @Slf4j
 @UtilityClass
-public final class FileUtils {
+public final class ExcelUtils {
     public static <T> byte[] exportExcel(List<T> listData, Map<String, Object> params, String templatePath) {
         Context context = new Context();
         context.putVar("data", listData);

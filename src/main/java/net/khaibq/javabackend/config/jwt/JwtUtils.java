@@ -51,6 +51,7 @@ public class JwtUtils {
         claims.put("id", customUser.getId());
         claims.put("username", authentication.getName());
         claims.put("email", customUser.getEmail());
+        claims.put("level", customUser.getLevel());
         claims.put("roles", authorities);
 
         return Jwts.builder()
@@ -72,6 +73,7 @@ public class JwtUtils {
         String username = null;
         Long id = null;
         String email = null;
+        Integer level = null;
         if (claims.get("username") != null) {
             username = (String) claims.get("username");
         }
@@ -81,8 +83,11 @@ public class JwtUtils {
         if (claims.get("email") != null) {
             email = (String) claims.get("email");
         }
+        if (claims.get("level") != null) {
+            level = Integer.valueOf(String.valueOf(claims.get("level")));
+        }
         CustomUser principal = new CustomUser(username, "", true,
-                true, true, true, authorities, id, email);
+                true, true, true, authorities, id, email, level);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 

@@ -8,9 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -24,6 +21,4 @@ public class CreateDto {
     private String password;
     @NotEmpty
     private String email;
-    private String deptCode;
-    private List<String> roles = new ArrayList<>();
 }

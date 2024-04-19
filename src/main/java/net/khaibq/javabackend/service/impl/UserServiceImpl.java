@@ -6,11 +6,8 @@ import net.khaibq.javabackend.dto.PageDataDto;
 import net.khaibq.javabackend.dto.user.CreateDto;
 import net.khaibq.javabackend.dto.user.UpdateDto;
 import net.khaibq.javabackend.dto.user.UserDto;
-import net.khaibq.javabackend.entity.Role;
 import net.khaibq.javabackend.entity.User;
 import net.khaibq.javabackend.exception.BaseException;
-import net.khaibq.javabackend.repository.DepartmentRepository;
-import net.khaibq.javabackend.repository.RoleRepository;
 import net.khaibq.javabackend.repository.UserRepository;
 import net.khaibq.javabackend.service.UserService;
 import net.khaibq.javabackend.ultis.CommonUtils;
@@ -30,8 +27,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final DepartmentRepository departmentRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
@@ -46,33 +41,22 @@ public class UserServiceImpl implements UserService {
     public UserDto getDetail(Long id) {
         return userRepository.findById(id)
                 .map(entity -> modelMapper.map(entity, UserDto.class))
-                .orElseThrow(() -> new BaseException("User does not exist"));
+                .orElseThrow(() -> new BaseException("Người dùng không tồn tại"));
     }
 
     @Override
     public UserDto create(CreateDto dto) {
         if (userRepository.existsByUsernameIgnoreCase(dto.getUsername())) {
-            throw new BaseException("Username already exists");
+            throw new BaseException("Tên đăng nhập đã được sử dụng");
         }
         if (userRepository.existsByEmailIgnoreCase(dto.getEmail())) {
-            throw new BaseException("Email already exists");
+            throw new BaseException("Email đã được sử dụng");
         }
-        if (dto.getDeptCode() != null && !departmentRepository.existsByCode(dto.getDeptCode())) {
-            throw new BaseException("Department does not exist");
-        }
-
-        List<Role> roles = dto.getRoles()
-                .stream()
-                .map(x -> roleRepository.findByCode(x)
-                        .orElseThrow(() -> new BaseException("role '" + x + "' does not exist")))
-                .toList();
 
         User user = new User();
         user.setUsername(dto.getUsername().toLowerCase());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setEmail(dto.getEmail());
-        user.setDeptCode(dto.getDeptCode());
-        user.setRoles(roles);
         user.setIsDeleted(0);
         userRepository.save(user);
         return modelMapper.map(user, UserDto.class);
@@ -81,44 +65,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(UpdateDto dto) {
         User user = userRepository.findById(dto.getId())
-                .orElseThrow(() -> new BaseException("Not found user with id = " + dto.getId()));
+                .orElseThrow(() -> new BaseException("Không tìm thấy người dùng với id = " + dto.getId()));
         String email = dto.getEmail();
         if (StringUtils.isNotEmpty(dto.getEmail()) && !StringUtils.equalsIgnoreCase(user.getEmail(), dto.getEmail())
             && userRepository.existsByEmailIgnoreCase(dto.getEmail())) {
-            throw new BaseException("Email is already in use by another user");
+            throw new BaseException("Email đã được sử dụng");
         }
         user.setEmail(email);
-
-        if (dto.getDeptCode() != null
-            && !Objects.equals(dto.getDeptCode(), user.getDeptCode())
-            && !departmentRepository.existsByCode(dto.getDeptCode())) {
-            throw new BaseException("Department does not exist");
-        }
-        user.setDeptCode(dto.getDeptCode());
-
         if (StringUtils.isNotEmpty(dto.getPassword()) && !passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
-
-        List<Role> roles = user.getRoles()
-                .stream()
-                .filter(x -> dto.getRoles().contains(x.getCode()))
-                .collect(Collectors.toList());
-
-        List<String> strRoles = roles.stream().map(Role::getCode).toList();
-
-        dto.getRoles()
-                .stream()
-                .filter(x -> !strRoles.contains(x))
-                .forEach(x -> {
-                    Role newRole = roleRepository.findByCode(x)
-                            .orElseThrow(() -> new BaseException("role '" + x + "' does not exist"));
-                    roles.add(newRole);
-                });
-        user.setRoles(roles);
         user.setIsDeleted(dto.getIsDeleted());
         userRepository.save(user);
-
         return modelMapper.map(user, UserDto.class);
     }
 }

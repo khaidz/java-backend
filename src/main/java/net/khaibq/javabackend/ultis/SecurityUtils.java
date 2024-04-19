@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import net.khaibq.javabackend.config.security.CustomUser;
+import net.khaibq.javabackend.exception.BaseException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,9 +22,10 @@ import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SecurityUtils {
-    public static Optional<String> getCurrentUsername() {
+    public static String getCurrentUsername() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
+        return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()))
+                .orElseThrow(() -> new BaseException("Người dùng chưa đăng nhập"));
     }
 
     public static boolean isAuthenticated() {
@@ -51,7 +53,7 @@ public final class SecurityUtils {
         } else if (principal instanceof UserDetails userDetails) {
             return Optional.of(userDetails);
         }
-        return Optional.empty();
+        throw new BaseException("Không tìm thấy người dùng");
     }
 
 

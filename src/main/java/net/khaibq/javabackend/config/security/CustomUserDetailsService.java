@@ -2,7 +2,6 @@ package net.khaibq.javabackend.config.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.khaibq.javabackend.entity.Role;
 import net.khaibq.javabackend.entity.User;
 import net.khaibq.javabackend.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,15 +23,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsernameIgnoreCase(username);
         if (user != null) {
-            List<Role> roles = user.getRoles().stream().filter(x -> !Objects.equals(x.getIsDeleted(), 1)).toList();
-            List<SimpleGrantedAuthority> grantedAuthorityList = roles
-                    .stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getCode()))
-                    .toList();
+            List<SimpleGrantedAuthority> grantedAuthorityList = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
             return new CustomUser(user.getUsername(), user.getPassword(), !Objects.equals(user.getIsDeleted(), 1),
-                    true, true, true, grantedAuthorityList, user.getId(), user.getEmail());
+                    true, true, true, grantedAuthorityList, user.getId(), user.getEmail(), user.getLevel());
         }
-        throw new UsernameNotFoundException("User does not exist");
+        throw new UsernameNotFoundException("Người dùng không tồn tại");
     }
 }

@@ -19,7 +19,7 @@ public class BaseResponse<T> {
     private String message;
 
     public static <T> BaseResponse<T> success(T data) {
-        return new BaseResponse<>(Constant.SUCCESSED_STATUS, data, null);
+        return new BaseResponse<>(Constant.SUCCESS_STATUS, data, null);
     }
 
     public static <T> BaseResponse<T> fail(String message) {
