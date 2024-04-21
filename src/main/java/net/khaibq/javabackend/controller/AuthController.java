@@ -1,6 +1,7 @@
 package net.khaibq.javabackend.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import net.khaibq.javabackend.config.jwt.JwtUtils;
 import net.khaibq.javabackend.dto.BaseResponse;
 import net.khaibq.javabackend.dto.auth.LoginRequestDto;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;

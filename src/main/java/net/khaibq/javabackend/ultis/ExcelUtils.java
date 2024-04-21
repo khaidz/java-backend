@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -204,6 +205,9 @@ public final class ExcelUtils {
                 break;
             case NUMERIC:
                 cellValue = cell.getNumericCellValue();
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    cellValue = cell.getDateCellValue();
+                }
                 break;
             case STRING:
                 cellValue = cell.getStringCellValue();

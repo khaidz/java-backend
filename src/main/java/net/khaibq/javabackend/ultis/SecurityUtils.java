@@ -53,7 +53,7 @@ public final class SecurityUtils {
         } else if (principal instanceof UserDetails userDetails) {
             return Optional.of(userDetails);
         }
-        throw new BaseException("Không tìm thấy người dùng");
+        throw new BaseException("Người dùng chưa đăng nhập");
     }
 
 

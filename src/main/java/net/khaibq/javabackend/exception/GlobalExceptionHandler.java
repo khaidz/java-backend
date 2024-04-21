@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import net.khaibq.javabackend.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -45,6 +46,15 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({BadCredentialsException.class, DisabledException.class})
     public BaseResponse<Object> handleAuthenticationException(Exception ex) {
+        if (ex instanceof BadCredentialsException){
+            return BaseResponse.fail("Tài khoản hoặc mật khẩu không đúng");
+        }
+        return BaseResponse.fail("Tài khoản đang bị khóa");
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler({AccessDeniedException.class})
+    public BaseResponse<Object> handleAccessDeniedException(Exception ex) {
         return BaseResponse.fail(ex.getMessage());
     }
 

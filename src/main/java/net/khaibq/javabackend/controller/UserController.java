@@ -1,8 +1,9 @@
 package net.khaibq.javabackend.controller;
 
-
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import net.khaibq.javabackend.config.annotation.CheckLevel;
 import net.khaibq.javabackend.dto.BaseResponse;
 import net.khaibq.javabackend.dto.PageDataDto;
 import net.khaibq.javabackend.dto.user.CreateDto;
@@ -23,10 +24,11 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/users")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
+    @CheckLevel(value = 100)
     @GetMapping
     public BaseResponse<PageDataDto<UserDto>> getListUser(Pageable pageable) {
         return BaseResponse.success(userService.getList(pageable));
