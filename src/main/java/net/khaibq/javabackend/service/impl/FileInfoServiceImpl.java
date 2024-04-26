@@ -36,7 +36,7 @@ public class FileInfoServiceImpl implements FileInfoService {
         }
         String uploadDir = env.getProperty("app.file.uploadDir");
         List<String> listExtensionAllow = env.getProperty("app.file.extensions", List.class);
-        String extension = CommonUtils.getFileExtension(file.getOriginalFilename()).toLowerCase();
+        String extension = CommonUtils.getFileExtension(file.getOriginalFilename());
         if (!CommonUtils.isValidExtension(listExtensionAllow, extension)) {
             throw new BaseException("Định dạng file không hỗ trợ");
         }
