@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class FileUploadRequestDto {
-    @NotNull(message = "Chưa chọn file")
-    private MultipartFile file;
+    private MultipartFile[] files;
     private String type;
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,12 @@ public class GlobalExceptionHandler {
         ex.getFieldErrors().forEach(x -> list.add(x.getField() + " " + x.getDefaultMessage()));
         String error = String.join(" \n", list);
         return BaseResponse.fail(error);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public BaseResponse<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+        return BaseResponse.fail("Dung lượng file tối đa cho phép là 10MB");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
