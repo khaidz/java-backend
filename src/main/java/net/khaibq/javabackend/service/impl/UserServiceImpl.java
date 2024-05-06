@@ -3,6 +3,7 @@ package net.khaibq.javabackend.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import net.khaibq.javabackend.dto.PageDataDto;
+import net.khaibq.javabackend.dto.auth.RegisterRequestDto;
 import net.khaibq.javabackend.dto.user.CreateDto;
 import net.khaibq.javabackend.dto.user.UpdateDto;
 import net.khaibq.javabackend.dto.user.UserDto;
@@ -11,6 +12,7 @@ import net.khaibq.javabackend.exception.BaseException;
 import net.khaibq.javabackend.repository.UserRepository;
 import net.khaibq.javabackend.service.UserService;
 import net.khaibq.javabackend.ultis.CommonUtils;
+import net.khaibq.javabackend.ultis.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,35 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
+
+    @Override
+    public UserDto getUserInfo() {
+        String username = SecurityUtils.getCurrentUsername();
+        User user = userRepository.findByUsernameIgnoreCase(username);
+        return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public Long registerUser(RegisterRequestDto dto) {
+        if (userRepository.existsByUsernameIgnoreCase(dto.getUsername())){
+            throw new BaseException("Tên đăng nhập đã được sử dụng");
+        }
+        if (userRepository.existsByEmailIgnoreCase(dto.getEmail())){
+            throw new BaseException("Email đã được sử dụng");
+        }
+        if (!List.of(0,1).contains(dto.getGender())){
+            throw new BaseException("Giới tính không hợp lệ");
+        }
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setEmail(dto.getEmail());
+        user.setGender(dto.getGender());
+        user.setLevel(0);
+        user.setIsDeleted(0);
+        userRepository.save(user);
+        return user.getId();
+    }
 
     @Override
     public PageDataDto<UserDto> getList(Pageable pageable) {

@@ -11,6 +11,7 @@ import net.khaibq.javabackend.dto.user.UpdateDto;
 import net.khaibq.javabackend.dto.user.UserDto;
 import net.khaibq.javabackend.exception.BaseException;
 import net.khaibq.javabackend.service.UserService;
+import net.khaibq.javabackend.ultis.SecurityUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    @GetMapping("/getUserInfo")
+    public BaseResponse<UserDto> getUserInfo() {
+        return BaseResponse.success(userService.getUserInfo());
+    }
 
     @CheckLevel(value = 100)
     @GetMapping
