@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import net.khaibq.javabackend.dto.PageDataDto;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -39,5 +41,17 @@ public final class CommonUtils {
         slug = slug.replaceAll("-+", "-");
         slug = slug.replaceAll("^-+|-+$", "");
         return slug;
+    }
+
+    public static String getFileExtension(String filename) {
+        return Optional.ofNullable(filename)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(filename.lastIndexOf(".") + 1))
+                .orElse("");
+    }
+
+    public static boolean isValidExtension(List<String> extensions, String input){
+        if (extensions == null || input == null) return false;
+        return extensions.contains(input.toLowerCase());
     }
 }
